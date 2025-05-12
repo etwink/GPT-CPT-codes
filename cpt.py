@@ -1,6 +1,14 @@
 import json
 
-# Detailed CPT code groupings
+# Recreate and update the CPT groupings with the new subcategory format
+def convert_range_to_list(code_range):
+    parts = code_range.split(',')
+    ranges = []
+    for part in parts:
+        start, end = part.strip().split('–')
+        ranges.append([start.strip(), end.strip()])
+    return ranges
+
 cpt_groupings = {
     "Evaluation and Management": {
         "code_range": "99202–99499",
@@ -74,9 +82,17 @@ cpt_groupings = {
     }
 }
 
+# Update subcategories to new format
+for section in cpt_groupings:
+    if 'subcategories' in cpt_groupings[section]:
+        updated_subcategories = {}
+        for name, code_range in cpt_groupings[section]['subcategories'].items():
+            updated_subcategories[name] = convert_range_to_list(code_range)
+        cpt_groupings[section]['subcategories'] = updated_subcategories
+
 # Save to JSON file
-output_path = "/mnt/data/detailed_cpt_groupings.json"
-with open(output_path, "w") as file:
+updated_output_path = "/mnt/data/detailed_cpt_groupings_updated.json"
+with open(updated_output_path, "w") as file:
     json.dump(cpt_groupings, file, indent=4)
 
-output_path
+updated_output_path
